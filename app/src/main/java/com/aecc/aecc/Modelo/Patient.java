@@ -1,5 +1,7 @@
 package com.aecc.aecc.Modelo;
 
+import com.google.gson.Gson;
+
 import java.io.Serializable;
 
 public class Patient implements Serializable {
@@ -80,6 +82,16 @@ public class Patient implements Serializable {
 
     public void setIdTerapeuta(int idTerapeuta) {
         this.mIdTerapeuta = idTerapeuta;
+    }
+
+    public String serializeUser(){
+        Gson userJson = new Gson();
+        return userJson.toJson(this);
+    }
+
+    public Patient createUserFromJson(String userJson){
+        Gson objectJson = new Gson();
+        return objectJson.fromJson(userJson, Patient.class);
     }
 
     @Override

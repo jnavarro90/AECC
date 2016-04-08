@@ -80,38 +80,24 @@ public class WebService {
                 .post(body)
                 .build();
 
-        //Call se hace para que sea asincrona al hilo del main
-        Call call = mOkHttpClient.newCall(mRequest);
+        Response response = null;
+        try {
+            response = mOkHttpClient.newCall(mRequest).execute();
 
-        call.enqueue(new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                try {
-                    mRespuestaWS.put("error", 404);
-                } catch (JSONException e1) {
-                    e1.printStackTrace();
-                }
+            if (response.code() == 404){
+                mRespuestaWS.put("error", 404);
+            }else {
+                //Tenemos que asignarlo a una variable global para salir del onResponse
+
+                mRespuestaWS = new JSONObject(response.body().string());
+                Log.d(TAG, mRespuestaWS.toString());
+
             }
-
-            @Override
-            public void onResponse(Call call, Response response) {
-                try {
-                    if (response.code() == 404){
-                        mRespuestaWS.put("error", 404);
-                    }else {
-                        //Tenemos que asignarlo a una variable global para salir del onResponse
-
-                            mRespuestaWS = new JSONObject(response.body().string());
-                            Log.d(TAG, mRespuestaWS.toString());
-
-                    }
-                } catch (IOException e) {
-                    Log.e(TAG, "Exception caugth", e);
-                } catch (JSONException e) {
-                    Log.e(TAG, "Exception caugth", e);
-                }
-            }
-        });
+        } catch (IOException e) {
+            Log.e(TAG, "Exception caugth", e);
+        } catch (JSONException e) {
+            Log.e(TAG, "Exception caugth", e);
+        }
 
         //Devolvemos la respuesta del webservice en formato JSON
         return mRespuestaWS;

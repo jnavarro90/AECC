@@ -1,6 +1,9 @@
 package com.aecc.aecc.Controlador;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -27,27 +30,24 @@ public class Login extends AppCompatActivity{
 
 
     private final String TAG = Login.class.getSimpleName();
-    private WebService mWebServicePaciente;
+    private UserLoginTask mAuthLogin;
     private Patient mPatient;
 
     @Bind(R.id.etUsuario) EditText mEditUsuario;
     @Bind(R.id.etPass) EditText mEditPass;
     @Bind(R.id.tvRecuperarPass) TextView mRecuperarPass;
     @Bind(R.id.cbConectado) CheckBox mConectado;
+
     @OnClick(R.id.bLogin) void onClick() {
 
         if(isEmpty(mEditPass) || isEmpty(mEditUsuario)) {
             Toast.makeText(this, R.string.error_faltan_campos, Toast.LENGTH_SHORT).show();
         }else{
-            String json = "{\"nombre_usuario\":\"" + mEditUsuario.getText().toString() +
-                    "\",\"password\":\"" + mEditPass.getText().toString()+ "\"}";
-            JSONObject datos_recibidos = mWebServicePaciente.post(getString(R.string.metodo_validar), json, " ");
-            if(datos_recibidos.has("error")){
-                Log.e(TAG, "Ha ocurrido un error al recibir los datos");
-            }else{
-                mPatient = new Patient();
-                login(datos_recibidos);
-            }
+            //LLamar a metodo asincrono para que haga el login
+
+            mAuthLogin = new UserLoginTask(mEditUsuario.getText().toString(),mEditPass.getText().toString());
+            mAuthLogin.execute((Void) null);
+
         }
     }
 
@@ -66,9 +66,14 @@ public class Login extends AppCompatActivity{
             e.printStackTrace();
         }
         setContentView(R.layout.activity_home);
-        Intent intent = new Intent(this, Home.class);
-        intent.putExtra("datos_usuario", (Serializable) mPatient);
-        startActivity(intent);
+        SharedPreferences prefs =
+                getSharedPreferences("Settings", Context.MODE_PRIVATE);
+
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("Patient", mPatient.serializeUser());
+        editor.commit();
+
+        startActivity(new Intent(this, Home.class));
 
     }
 
@@ -77,7 +82,6 @@ public class Login extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        mWebServicePaciente = new WebService(getString(R.string.url_pacientes));
         ButterKnife.bind(this);
 
     }
@@ -89,6 +93,50 @@ public class Login extends AppCompatActivity{
     private void alertUserAboutPin(){
         AlertPinDialog dialog = new AlertPinDialog();
         dialog.show(getFragmentManager(), "dialog");
+    }
+
+    /**
+     * Represents an asynchronous login/registration task used to authenticate
+     * the user.
+     */
+    public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
+
+        private final String mUser;
+        private final String mPassword;
+        private JSONObject datos_recibidos;
+
+        UserLoginTask(String user, String password) {
+            mUser = user;
+            mPassword = password;
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... params) {
+            WebService auth = new WebService(getString(R.string.url_pacientes));
+            String json = "{\"nombre_usuario\":\"" + mUser +
+                    "\",\"password\":\"" + mPassword + "\"}";
+
+            datos_recibidos = auth.post(getString(R.string.metodo_validar), json, " ");
+
+            return true;
+        }
+
+        @Override
+        protected void onPostExecute(final Boolean success) {
+            mAuthLogin = null;
+            if(datos_recibidos.has("error")){
+                Log.e(TAG, "Ha ocurrido un error al recibir los datos");
+            }else{
+                mPatient = new Patient();
+                login(datos_recibidos);
+            }
+
+        }
+
+        @Override
+        protected void onCancelled() {
+            mAuthLogin = null;
+        }
     }
 
 }
