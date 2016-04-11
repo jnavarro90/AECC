@@ -20,8 +20,6 @@ import com.aecc.aecc.R;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.Serializable;
-
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -30,8 +28,9 @@ public class Login extends AppCompatActivity{
 
 
     private final String TAG = Login.class.getSimpleName();
-    private UserLoginTask mAuthLogin;
+    private AsyncLogin mAuthLogin;
     private Patient mPatient;
+    private Clock mClock;
 
     @Bind(R.id.etUsuario) EditText mEditUsuario;
     @Bind(R.id.etPass) EditText mEditPass;
@@ -45,7 +44,7 @@ public class Login extends AppCompatActivity{
         }else{
             //LLamar a metodo asincrono para que haga el login
 
-            mAuthLogin = new UserLoginTask(mEditUsuario.getText().toString(),mEditPass.getText().toString());
+            mAuthLogin = new AsyncLogin(mEditUsuario.getText().toString(),mEditPass.getText().toString());
             mAuthLogin.execute((Void) null);
 
         }
@@ -65,14 +64,21 @@ public class Login extends AppCompatActivity{
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        setContentView(R.layout.activity_home);
+
         SharedPreferences prefs =
                 getSharedPreferences("Settings", Context.MODE_PRIVATE);
 
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString("Patient", mPatient.serializeUser());
+        if(mConectado.isChecked()) {
+            editor.putLong("LastLogin", mClock.getNowMillis());
+            editor.putBoolean("RememberMe", true);
+        }else{
+            editor.putBoolean("RememberMe", false);
+        }
         editor.commit();
 
+        setContentView(R.layout.activity_home);
         startActivity(new Intent(this, Home.class));
 
     }
@@ -80,10 +86,26 @@ public class Login extends AppCompatActivity{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        mClock = new Clock();
+        SharedPreferences preferencesUser = getSharedPreferences("Settings", Context.MODE_PRIVATE);
+        long lastLogin = preferencesUser.getLong("LastLogin", -1);
+        Log.d(TAG, String.valueOf(mClock.diferenceInMinutes(lastLogin, mClock.getNowMillis())));
+        Log.d(TAG, String.valueOf(preferencesUser.getBoolean("RememberMe", false)));
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
 
+        if(preferencesUser.getBoolean("RememberMe", false)){
+            mConectado.setChecked(true);
+            if(mClock.diferenceInMinutes(lastLogin, mClock.getNowMillis()) < 1){
+                SharedPreferences.Editor editor = preferencesUser.edit();
+                editor.putLong("LastLogin", mClock.getNowMillis());
+                editor.commit();
+                setContentView(R.layout.activity_home);
+                startActivity(new Intent(this, Home.class));
+            }
+        }
     }
 
     private boolean isEmpty(EditText myeditText) {
@@ -99,13 +121,13 @@ public class Login extends AppCompatActivity{
      * Represents an asynchronous login/registration task used to authenticate
      * the user.
      */
-    public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
+    public class AsyncLogin extends AsyncTask<Void, Void, Boolean> {
 
         private final String mUser;
         private final String mPassword;
         private JSONObject datos_recibidos;
 
-        UserLoginTask(String user, String password) {
+        AsyncLogin(String user, String password) {
             mUser = user;
             mPassword = password;
         }

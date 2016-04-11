@@ -48,20 +48,17 @@ public class Home extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        ButterKnife.bind(this);
-
-
-        //paintMenu();
+        paintInfo();
     }
 
-    private void paintMenu() {
+    private void paintInfo() {
         SharedPreferences preferencesUser = getSharedPreferences("Settings", Context.MODE_PRIVATE);
         String jsonPatientSaved = preferencesUser.getString("Patient", null);
         Patient patient = new Patient();
         mPatient = new Patient();
         mPatient = patient.createUserFromJson(jsonPatientSaved);
-        TextView mGreatting = (TextView) findViewById(R.id.tvGreatting);
-        mGreatting.setText(mPatient.getNombre());
+        TextView mGreeting = (TextView) findViewById(R.id.tv_1);
+        mGreeting.setText("¿Cómo te encuentras hoy " + mPatient.getNombre() + "?");
 
     }
 
