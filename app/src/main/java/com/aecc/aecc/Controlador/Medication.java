@@ -81,39 +81,25 @@ public class Medication extends AppCompatActivity
 
         if (id == R.id.nav_home) {
             setContentView(R.layout.activity_home);
-            Intent intent = new Intent(this, Home.class);
-            intent.putExtra("datos_usuario", (Serializable) mPatient);
-            startActivity(intent);
+            startActivity(new Intent(this, Home.class));
         } else if (id == R.id.nav_surveys) {
             setContentView(R.layout.activity_surveys);
-            Intent intent = new Intent(this, Surveys.class);
-            intent.putExtra("datos_usuario", (Serializable) mPatient);
-            startActivity(intent);
+            startActivity(new Intent(this, Surveys.class));
         } else if (id == R.id.nav_calendar) {
             setContentView(R.layout.activity_calendar);
-            Intent intent = new Intent(this, Calendar.class);
-            intent.putExtra("datos_usuario", (Serializable) mPatient);
-            startActivity(intent);
+            startActivity(new Intent(this, Calendar.class));
         } else if (id == R.id.nav_medication) {
             setContentView(R.layout.activity_medication);
-            Intent intent = new Intent(this, Medication.class);
-            intent.putExtra("datos_usuario", (Serializable) mPatient);
-            startActivity(intent);
+            startActivity(new Intent(this, Medication.class));
         } else if (id == R.id.nav_evolution){
             setContentView(R.layout.activity_evolution);
-            Intent intent = new Intent(this, Evolution.class);
-            intent.putExtra("datos_usuario", (Serializable) mPatient);
-            startActivity(intent);
+            startActivity(new Intent(this, Evolution.class));
         } else if (id == R.id.nav_profile){
             setContentView(R.layout.activity_profile);
-            Intent intent = new Intent(this, Profile.class);
-            intent.putExtra("datos_usuario", (Serializable) mPatient);
-            startActivity(intent);
+            startActivity(new Intent(this, Profile.class));
         } else if (id == R.id.nav_settings){
             setContentView(R.layout.activity_settings);
-            Intent intent = new Intent(this, Settings.class);
-            intent.putExtra("datos_usuario", (Serializable) mPatient);
-            startActivity(intent);
+            startActivity(new Intent(this, Settings.class));
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
