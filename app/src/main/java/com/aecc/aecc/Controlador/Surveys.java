@@ -10,17 +10,38 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
 
-import com.aecc.aecc.Modelo.Patient;
+import com.aecc.aecc.Controlador.PreguntasEncuestas.EncuestaAnimo;
 import com.aecc.aecc.R;
 
-import java.io.Serializable;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class Surveys extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private final String TAG = Login.class.getSimpleName();
-    private Patient mPatient;
+
+    @OnClick({R.id.b_fs, R.id.b_ss}) void onClick(Button button){
+        Intent intent = new Intent(this, EncuestaAnimo.class);
+
+        switch(button.getId()){
+            case R.id.b_fs:
+                setContentView(R.layout.activity_encuesta_animo);
+                intent.putExtra("tipo_encuesta", 1);
+                startActivity(intent);
+                break;
+            case R.id.b_ss:
+                setContentView(R.layout.activity_encuesta_animo);
+                intent.putExtra("tipo_encuesta", 2);
+                startActivity(intent);
+                break;
+        }
+
+    }
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,8 +58,8 @@ public class Surveys extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        Intent intent = getIntent();
-        mPatient = (Patient)intent.getSerializableExtra("datos_usuario");
+        ButterKnife.bind(this);
+
     }
 
     @Override
@@ -81,39 +102,25 @@ public class Surveys extends AppCompatActivity
 
         if (id == R.id.nav_home) {
             setContentView(R.layout.activity_home);
-            Intent intent = new Intent(this, Home.class);
-            intent.putExtra("datos_usuario", (Serializable) mPatient);
-            startActivity(intent);
+            startActivity(new Intent(this, Home.class));
         } else if (id == R.id.nav_surveys) {
             setContentView(R.layout.activity_surveys);
-            Intent intent = new Intent(this, Surveys.class);
-            intent.putExtra("datos_usuario", (Serializable) mPatient);
-            startActivity(intent);
+            startActivity(new Intent(this, Surveys.class));
         } else if (id == R.id.nav_calendar) {
             setContentView(R.layout.activity_calendar);
-            Intent intent = new Intent(this, Calendar.class);
-            intent.putExtra("datos_usuario", (Serializable) mPatient);
-            startActivity(intent);
+            startActivity(new Intent(this, Calendario.class));
         } else if (id == R.id.nav_medication) {
             setContentView(R.layout.activity_medication);
-            Intent intent = new Intent(this, Medication.class);
-            intent.putExtra("datos_usuario", (Serializable) mPatient);
-            startActivity(intent);
+            startActivity(new Intent(this, Medication.class));
         } else if (id == R.id.nav_evolution){
             setContentView(R.layout.activity_evolution);
-            Intent intent = new Intent(this, Evolution.class);
-            intent.putExtra("datos_usuario", (Serializable) mPatient);
-            startActivity(intent);
+            startActivity(new Intent(this, Evolution.class));
         } else if (id == R.id.nav_profile){
             setContentView(R.layout.activity_profile);
-            Intent intent = new Intent(this, Profile.class);
-            intent.putExtra("datos_usuario", (Serializable) mPatient);
-            startActivity(intent);
+            startActivity(new Intent(this, Profile.class));
         } else if (id == R.id.nav_settings){
             setContentView(R.layout.activity_settings);
-            Intent intent = new Intent(this, Settings.class);
-            intent.putExtra("datos_usuario", (Serializable) mPatient);
-            startActivity(intent);
+            startActivity(new Intent(this, Settings.class));
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

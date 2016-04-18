@@ -15,6 +15,10 @@ public class Clock {
         return currentDate;
     }
 
+    public Calendar getCalendar(){
+        return calendar;
+    }
+
     public long getNowMillis(){
         return calendar.getTimeInMillis();
     }

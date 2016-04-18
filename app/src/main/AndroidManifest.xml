@@ -52,7 +52,7 @@
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
         <activity
-            android:name=".Controlador.Calendar"
+            android:name=".Controlador.Calendario"
             android:label="@string/title_activity_calendar"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
@@ -81,7 +81,39 @@
             android:label="@string/title_activity_settings"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
-
+        <activity
+            android:name=".Controlador.PreguntasEncuestas.EncuestaAnimo"
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
+        <activity
+            android:name=".Controlador.PreguntasEncuestas.EncuestaSleep"
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
+        <activity
+            android:name=".Controlador.PreguntasEncuestas.EncuestaActividades"
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
+        <activity
+            android:name=".Controlador.PreguntasEncuestas.EncuestaDolor"
+            android:theme="@style/AppTheme.NoActionBar">
+            >
+        </activity>
+        <activity
+            android:name=".Controlador.PreguntasEncuestas.EncuestaNivelDolor"
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
+        <activity
+            android:name=".Controlador.PreguntasEncuestas.EncuestaSintomas"
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
+        <activity
+            android:name=".Controlador.PreguntasEncuestas.EncuestaPartesDolor"
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
+        <activity
+            android:name=".Controlador.PreguntasEncuestas.EncuestaEstadoFisico"
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
     </application>
 
 </manifest>
